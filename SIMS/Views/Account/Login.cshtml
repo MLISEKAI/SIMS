@@ -1,0 +1,46 @@
+﻿@model SIMS.Users
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container d-flex align-items-center justify-content-center" style="height: 100vh">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <div class="card-header border-bottom-0 bg-white">
+                <h2 class="d-flex m-auto justify-content-center fst-italic fs-1">@ViewData["Title"]</h2>
+            </div>
+            <div class="card-body">
+                <form asp-action="Login" method="post">
+                    <div class="form-group">
+                        <label for="UserName" class="control-label m-1">User Name</label>
+                        <input id="UserName" name="userName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Pass" class="control-label m-1">Password</label>
+                        <input id="Pass" name="password" type="password" class="form-control" />
+                        <span asp-validation-for="Pass" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary mt-4 rounded-pill fs-4" style="width: 100%">Login</button>
+                    </div>
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div style="color: red;">@ViewBag.ErrorMessage</div>
+                    }
+                </form>
+            </div>
+            <div class="card-footer bg-white border-top-0">
+                <span>
+                    If you do not have an account, please contact admin:
+                    <a href="mailto:admin@gmail.com" class="text-primary">admin@gmail.com</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
