@@ -5,3 +5,8 @@
 <h2>Export Users</h2>
 
 <a href="@Url.Action("Export", "Users")">Download Users List</a>
+
+
+<form asp-controller="Users" asp-action="Index" method="post" class="form-inline">
+    <button type="submit" class="btn bg-primary">Back to home</button>
+</form>

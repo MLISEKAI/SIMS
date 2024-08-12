@@ -61,20 +61,78 @@ namespace SIMS.Controllers
         {
             return View();
         }
-
-        // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,UserName,Pass,Email,UserRole")] Users users)
+        public async Task<IActionResult> Create([Bind("ID,UserName,Pass,UserRole")] Users users)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(users);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(users);
+                    await _context.SaveChangesAsync();
+
+                    // Handle related entities based on UserRole
+                    if (users.UserRole == "Student")
+                    {
+                        var student = new Students
+                        {
+                            Student_ID = users.ID,
+                            Student_Name = users.UserName,
+                            DateOfBirth = DateTime.Now,
+                            Address = "",
+                            Phone = "",
+                            Email = ""
+                        };
+                        _context.Students.Add(student);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else if (users.UserRole == "Teacher")
+                    {
+                        var teacher = new Teachers
+                        {
+                            Teacher_ID = users.ID,
+                            Teacher_Name = users.UserName,
+                            DateOfBirth = DateTime.Now,
+                            Address = "",
+                            Phone = "",
+                            Email = ""
+                        };
+                        _context.Teachers.Add(teacher);
+                        await _context.SaveChangesAsync();
+                        TempData["SuccessMessage"] = "Created successfully!";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else if (users.UserRole == "Admin")
+                    {
+                        var admin = new AdminSystem
+                        {
+                            Admin_ID = users.ID
+                        };
+                        _context.AdminSystem.Add(admin);
+                        await _context.SaveChangesAsync();
+                        TempData["SuccessMessage"] = "Created successfully!";
+                        return RedirectToAction(nameof(Index));
+                    
+                    }
+
+  
+                }
+                catch (DbUpdateException ex)
+                {
+                   
+                    ModelState.AddModelError("", $"DbUpdateException: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"General Error: {ex.Message}");
+                }
             }
             return View(users);
         }
+
+
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -120,6 +178,8 @@ namespace SIMS.Controllers
                         throw;
                     }
                 }
+
+                TempData["SuccessMessage"] = "Updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
             return View(users);
@@ -143,24 +203,58 @@ namespace SIMS.Controllers
             return View(users);
         }
 
-        // POST: Users/Delete/5
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Users == null)
             {
-                return Problem("Entity set 'StudentManagementContext.Users'  is null.");
-            }
-            var users = await _context.Users.FindAsync(id);
-            if (users != null)
-            {
-                _context.Users.Remove(users);
+                return Problem("Entity set 'SIMSContext.Users' is null.");
             }
 
-            await _context.SaveChangesAsync();
+            var user = await _context.Users.FindAsync(id);
+            if (user != null)
+            {
+                // Delete related student information
+                var student = await _context.Students.FindAsync(id);
+                if (student != null)
+                {
+                    // Delete related courses
+                    var studentCourses = await _context.Students_Courses
+                        .Where(sc => sc.Student_ID == id)
+                        .ToListAsync();
+                    _context.Students_Courses.RemoveRange(studentCourses);
+
+                    // Delete student
+                    _context.Students.Remove(student);
+                }
+
+                // Delete related teacher information (if exists)
+                var teacher = await _context.Teachers.FindAsync(id);
+                if (teacher != null)
+                {
+                    // Delete related courses for teacher
+                    var teacherCourses = await _context.Teachers_Courses
+                        .Where(tc => tc.Teacher_ID == id)
+                        .ToListAsync();
+                    _context.Teachers_Courses.RemoveRange(teacherCourses);
+
+                    // Delete teacher
+                    _context.Teachers.Remove(teacher);
+                }
+
+
+                // Delete user
+                _context.Users.Remove(user);
+
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
+
 
         private bool UsersExists(int id)
         {
@@ -197,32 +291,30 @@ namespace SIMS.Controllers
                 await file.CopyToAsync(stream);
                 stream.Seek(0, SeekOrigin.Begin);
 
-                using (var reader = new StreamReader(stream))
+                using var reader = new StreamReader(stream);
+                string line;
+                bool isFirstLine = true;
+
+                while ((line = reader.ReadLine()) != null)
                 {
-                    string line;
-                    bool isFirstLine = true;
-
-                    while ((line = reader.ReadLine()) != null)
+                    if (isFirstLine)
                     {
-                        if (isFirstLine)
-                        {
-                            isFirstLine = false;
-                            continue; // Skip header row
-                        }
+                        isFirstLine = false;
+                        continue; // Skip header row
+                    }
 
-                        var values = line.Split(',');
-                        if (values.Length == 5)
+                    var values = line.Split(',');
+                    if (values.Length == 5)
+                    {
+                        var user = new Users
                         {
-                            var user = new Users
-                            {
-                                UserName = values[1],
-                                Pass = values[2],
-                                Email = values[3],
-                                UserRole = values[4]
-                            };
+                            UserName = values[1],
+                            Pass = values[2],
+                           
+                            UserRole = values[3]
+                        };
 
-                            users.Add(user);
-                        }
+                        users.Add(user);
                     }
                 }
             }
@@ -251,12 +343,12 @@ namespace SIMS.Controllers
             var csvContent = new StringBuilder();
 
             // Write the header
-            csvContent.AppendLine("ID,UserName,Pass,Email,UserRole");
+            csvContent.AppendLine("ID,UserName,Pass,UserRole");
 
             // Write the data
             foreach (var user in users)
             {
-                csvContent.AppendLine($"{user.ID},{user.UserName},{user.Pass},{user.Email},{user.UserRole}");
+                csvContent.AppendLine($"{user.ID},{user.UserName},{user.Pass},{user.UserRole}");
             }
 
             writer.Write(csvContent.ToString());

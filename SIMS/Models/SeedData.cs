@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SIMS.Data;
 using SIMS.Models;
 using System;
+using System.Linq;
 
 namespace SIMS.Models
 {
-    public class SeedData : Controller
+    public class SeedData
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
@@ -20,21 +22,28 @@ namespace SIMS.Models
                     return;   // DB has been seeded
                 }
 
-                // Hash the password
+                // Seed initial data
+                var adminUser = new Users
+                {
+                    ID = 1,
+                    UserName = "admin",
+                    Pass = "1234", 
+                    UserRole = "Admin"
+                };
 
+                context.Users.Add(adminUser);
+                context.SaveChanges();
 
-                context.Users.AddRange(
-                    new Users
-                    {
-                        UserName = "admin",
-                        Pass = "1234",
-                        Email = "admin@example.com",
-                        UserRole = "Admin"
-                    }
-                );
+                context.AdminSystem.Add(new AdminSystem
+                {
+                    Admin_ID = adminUser.ID,
+                    User = adminUser
+                });
+
                 context.SaveChanges();
             }
         }
 
+        
     }
 }

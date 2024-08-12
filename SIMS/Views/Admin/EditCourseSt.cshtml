@@ -1,0 +1,35 @@
+﻿@model SIMS.Courses
+
+@{
+    ViewData["Title"] = "Edit Course";
+}
+
+<h1>Edit Course</h1>
+
+<form asp-action="EditCourseSt">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Course_ID" />
+    <input type="hidden" name="studentId" value="@ViewData["StudentId"]" />
+    <div class="form-group">
+        <label asp-for="Course_Name" class="control-label">Course Name</label>
+        <input asp-for="Course_Name" class="form-control" />
+        <span asp-validation-for="Course_Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Course_code" class="control-label">Course Code</label>
+        <input asp-for="Course_code" class="form-control" />
+        <span asp-validation-for="Course_code" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="control-label">Description</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="CoursesSt" asp-route-id="@ViewData["StudentId"]">Back to Courses</a>
+</div>

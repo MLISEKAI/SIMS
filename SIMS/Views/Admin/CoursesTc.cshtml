@@ -1,0 +1,80 @@
+﻿@model SIMS.Teachers
+@{
+    ViewData["Title"] = "Teaching Courses";
+    var teacher = ViewData["Teacher"] as Teachers;
+    var availableCourses = (List<Courses>)ViewData["AvailableCourses"];
+    var teachingCourseIds = (List<int>)ViewData["EnrolledCourseIds"];
+
+  
+}
+
+<h1>Manage Courses for @teacher.Teacher_Name</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form asp-action="CoursesTc" method="post">
+    <input type="hidden" name="id" value="@teacher.Teacher_ID" />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th class="d-none">Course ID</th>
+                <th>Course Name</th>
+                <th>Course Code</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in availableCourses)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="selectedCourses" value="@course.Course_ID" @(teachingCourseIds.Contains(course.Course_ID) ? "checked" : "") />
+                    </td>
+                    <td class="d-none">@course.Course_ID</td>
+                    <td>@course.Course_Name</td>
+                    <td>@course.Course_code</td>
+                    <td>@course.Description</td>
+                    <td>
+                        <a asp-action="EditCourseTc" asp-route-id="@course.Course_ID" asp-route-teacherId="@teacher.Teacher_ID" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="DeleteCourseTc" asp-route-id="@course.Course_ID" asp-route-teacherId="@teacher.Teacher_ID" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="form-group">
+        <input type="submit" value="Update Courses" class="btn btn-primary" />
+    </div>
+</form>
+
+<h2>Add New Course</h2>
+<form asp-action="AddCourseTc" method="post">
+    <input type="hidden" name="teacherId" value="@teacher.Teacher_ID" />
+    <div class="form-group">
+        <label for="Course_Name">Course Name:</label>
+        <input type="text" class="form-control" id="Course_Name" name="Course_Name" required>
+    </div>
+    <div class="form-group">
+        <label for="Course_code">Course Code:</label>
+        <input type="text" class="form-control" id="Course_code" name="Course_code" required>
+    </div>
+    <div class="form-group">
+        <label for="Description">Description:</label>
+        <textarea class="form-control" id="Description" name="Description" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Add Course</button>
+</form>
+
+<div>
+    <a asp-action="DetailsTc" asp-route-id="@teacher.Teacher_ID">Back to Details</a>
+</div>

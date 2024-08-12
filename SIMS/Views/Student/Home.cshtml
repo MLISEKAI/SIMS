@@ -1,0 +1,96 @@
+﻿@model SIMS.Students
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Student" asp-action="Home">Student Account</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-action="Courses" asp-route-id="@Model?.Student_ID">Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Student" asp-action="Index">Scores</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="container">
+    <main role="main" class="pb-3">
+        <div>
+            @if (Model != null)
+            {
+                <dl class="row">
+                    <dt class="col-sm-2">Name</dt>
+                    <dd class="col-sm-10">@Html.DisplayFor(model => model.Student_Name)</dd>
+                    <dt class="col-sm-2">Date Of Birth</dt>
+                    <dd class="col-sm-10">@Html.DisplayFor(model => model.DateOfBirth)</dd>
+                    <dt class="col-sm-2">Address</dt>
+                    <dd class="col-sm-10">@Html.DisplayFor(model => model.Address)</dd>
+                    <dt class="col-sm-2">Phone</dt>
+                    <dd class="col-sm-10">@Html.DisplayFor(model => model.Phone)</dd>
+                    <dt class="col-sm-2">Email</dt>
+                    <dd class="col-sm-10">@Html.DisplayFor(model => model.Email)</dd>
+                </dl>
+
+                <h2>Enrolled Courses</h2>
+                @if (Model.Students_Courses != null && Model.Students_Courses.Any())
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var studentCourse in Model.Students_Courses)
+                            {
+                                <tr>
+                                    <td>@studentCourse.Course.Course_code</td>
+                                    <td>@studentCourse.Course.Course_Name</td>
+                                    <td>@studentCourse.Course.Description</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No courses enrolled.</p>
+                }
+
+                <div class="d-flex justify-content-end">
+                    
+                    <a asp-action="Edit" asp-route-id="@Model?.Student_ID" class="btn btn-secondary mx-2">Edit</a> 
+
+                </div>
+            }
+            else
+            {
+                <p>Student not found.</p>
+            }
+        </div>
+    </main>
+
+    <form asp-controller="Account" asp-action="Login" method="post" class="form-inline">
+        <button type="submit" class="btn btn-danger mx-2">Logout</button>
+    </form>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

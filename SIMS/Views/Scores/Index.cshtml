@@ -1,0 +1,61 @@
+﻿@model IEnumerable<SIMS.Scores>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Scores</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Student)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teacher)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Course)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Score)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Grade)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Student.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Teacher.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course.Course_Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Score)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Grade)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Score_ID">Details</a> |
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+ <div class="btn btn-primay">
+        <a asp-action="Delete">Delete</a>
+        <a asp-action="Edit">Edit</a> |
+ </div>     

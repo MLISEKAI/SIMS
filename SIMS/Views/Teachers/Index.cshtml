@@ -1,0 +1,78 @@
+﻿@model IEnumerable<SIMS.Scores>
+
+@{
+    ViewData["Title"] = "Scores List";
+}
+
+<h1>Scores</h1>
+
+<table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Course Code</th>
+                <th>Teacher</th>
+                <th>Score</th>
+                <th>Grade</th>
+          
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>2</th>
+                <th>Tran Thanh Loc</th>
+                <th>Introduction to Computer Science</th>
+                <th>CS101</th>
+                <th>Dao Tran Chung</th>
+                <th>10</th>
+                <th>A</th>
+            </tr>
+            <tr>
+                <th>2</th>
+                <th>Tran Thanh Loc</th>
+                <th>Data Structures and Algorithms</th>
+                <th>CS201</th>
+                <th>Dao Tran Chung</th>
+                <th>10</th>
+                <th>A</th>
+
+            </tr>
+            <tr>
+                <th>2</th>
+                <th>Tran Thanh Loc</th>
+                <th>Web Development</th>
+                <th>CS401</th>
+                <th>Dao Tran Chung</th>
+
+                <th>10</th>
+                <th>A</th>
+
+            </tr>
+            <tr>
+                <th>2</th>
+                <th>Tran Thanh Loc</th>
+                <th>Artificial Intelligence</th>
+                <th>CS501</th>
+                <th>Dao Tran Chung</th>
+
+                <th>10</th>
+                <th>A</th>
+                <th></th>
+            </tr>
+    </tbody>
+            <th>
+        <a asp-controller="Teachers" asp-action="Edit">Edit</a> |
+        <a asp-controller="Teachers"  asp-action="Delete">Delete</a>
+            </th>
+</table>
+
+<div class="d-flex justify-content-end">
+    <a asp-action="Export" asp-route-id="" class="btn btn-info mx-2">Export Data</a>
+    <a asp-action="Import" asp-route-id="" class="btn btn-info mx-2">Import Data</a>
+</div>
+
+<div>
+    <a class="btn btn-primary" asp-controller="Teachers" asp-action="Home">Back to Home</a>
+</div>

@@ -1,0 +1,56 @@
+﻿@model SIMS.Teachers
+@{
+    ViewData["Title"] = "Teaching Courses";
+    var teacher = ViewData["Teacher"] as Teachers;
+    var availableCourses = (List<Courses>)ViewData["AvailableCourses"];
+    var teachingCourseIds = (List<int>)ViewData["EnrolledCourseIds"];
+}
+
+<h1>Teaching for @teacher.Teacher_Name</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form asp-action="Courses" method="post">
+    <input type="hidden" name="id" value="@teacher.Teacher_ID" />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th class="d-none">Course ID</th>
+                <th>Course Name</th>
+                <th>Course Code</th>
+                <th>Description</th
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in availableCourses)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="selectedCourses" value="@course.Course_ID" @(teachingCourseIds.Contains(course.Course_ID) ? "checked" : "") />
+                    </td>
+                    <td class="d-none">@course.Course_ID</td>
+                    <td>@course.Course_Name</td>
+                    <td>@course.Course_code</td>
+                    <td>@course.Description</td>
+                
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="form-group">
+        <input type="submit" value="Update Courses" class="btn btn-primary" />
+    </div>
+</form>
+
+<div class="form-group mt-2">
+    <a class="btn btn-primary" asp-action="Home" asp-route-id="@teacher.Teacher_ID">Back to Home</a>
+</div>

@@ -40,13 +40,11 @@ namespace SIMS.Controllers
         }
 
         // POST: Login
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string userName, string password)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             {
-                ViewBag.ErrorMessage = "Tên đăng nhập hoặc mật khẩu không được để trống.";
+                ViewBag.ErrorMessage = "Username or password cannot be left blank.";
                 return View();
             }
 
@@ -55,33 +53,21 @@ namespace SIMS.Controllers
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.UserName == userName && u.Pass == password);
 
-            if (user != null)
+            if (user != null) // Check if user is found
             {
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, userName),
-                    new Claim(ClaimTypes.Role, user.UserRole)
-                };
+            {
+                new Claim(ClaimTypes.Name, userName),
+                new Claim(ClaimTypes.Role, user.UserRole)
+            };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
-                    // Allow refreshing the authentication session.
                     AllowRefresh = true,
-                    // The time at which the authentication ticket expires. A 
-                    // value set here overrides the ExpireTimeSpan option of 
-                    // CookieAuthenticationOptions set with AddCookie.
                     ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20),
-                    // The time at which the authentication ticket was issued.
                     IssuedUtc = DateTimeOffset.UtcNow,
-                    // Whether the authentication session is persisted across 
-                    // multiple requests. Required when setting the 
-                    // ExpireTimeSpan option of CookieAuthenticationOptions 
-                    // set with AddCookie. Also required when setting 
-                    // ExpiresUtc.
                     IsPersistent = true,
-                    // The full path or absolute URI to be used as an http 
-                    // redirect response value.
                     RedirectUri = "/Users/Index"
                 };
 
@@ -90,17 +76,42 @@ namespace SIMS.Controllers
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties);
 
+                // Redirect based on user role
+                if (user.UserRole == "Student")
+                {
+                    // Redirect to the student account page
+                    var student = await _context.Students.FirstOrDefaultAsync(s => s.Student_ID == user.ID);
+                    if (student != null)
+                    {
+                        return RedirectToAction("Home", "Student", new { id = student.Student_ID });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Student account not found.");
+                    }
+                    
+                }
+                else if (user.UserRole == "Teacher")
+                {
+                    var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Teacher_ID == user.ID);
+                    if (teacher != null)
+                    {
+                        return RedirectToAction("Home", "Teachers", new { id = teacher.Teacher_ID });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Teacher account not found.");
+                    }
+                }
+                else if (user.UserRole == "Admin")
+                {
+                    return RedirectToAction("Home", "Admin");
+                }
+            }
 
-                return RedirectToAction("Home", "Admin");
-            }
-            else
-            {
-                ViewBag.ErrorMessage = "Tên đăng nhập hoặc mật khẩu không đúng.";
-                return View();
-            }
+            // If user is not found or role is not matched
+            ViewBag.ErrorMessage = "Username or password is incorrect.";
+            return View(); // Ensure a return statement is present
         }
-      
-
     }
-
 }

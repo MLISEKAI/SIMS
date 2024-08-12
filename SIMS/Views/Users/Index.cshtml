@@ -4,64 +4,51 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>User Account</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <form asp-controller="Users" asp-action="Create" class="form-inline">
+        <button type ="submit" class="btn btn-info">Create User</button>
+    </form>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pass)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserRole)
-            </th>
-            <th></th>
+            <th>ID</th>
+            <th>User Name</th>
+            <th>Password</th>
+            <th>User Role</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pass)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserRole)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ID</td>
+                <td>@item.UserName</td>
+                <td>@item.Pass</td>         
+                <td>@item.UserRole</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
-<p>
-    <a asp-action="Export">Export</a>
-</p>
-
-<p>
-    <a asp-action="Inport">Inport</a>
-</p>
-
-<footer class="border-top footer text-muted">
-    <form asp-controller="Account" asp-action="Login" method="post" class="form-inline">
-        <button type="submit" class="btn bg-primary">Logout</button>
+<div class="d-flex justify-content-end">
+    <form asp-controller="Users" asp-action="Import" class="form-inline">
+        <button type="submit" class="btn btn-info">Import Data</button>
     </form>
-</footer>
+    <form asp-controller="Users" asp-action="Export" class="form-inline mx-2">
+        <button type="submit" class="btn btn-info">Export Data</button>
+    </form>
+
+</div>
+<div>
+    <form asp-controller="Admin" asp-action="Home" method="post" class="form-inline">
+        <button type="submit" class="btn bg-primary">Back to Home</button>
+    </form>
+</div>

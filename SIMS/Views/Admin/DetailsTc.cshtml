@@ -1,0 +1,76 @@
+﻿@model SIMS.Teachers
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details Teacher</h1>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            Name
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Teacher_Name)
+        </dd>
+        <dt class="col-sm-2">
+            Date Of Birth
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DateOfBirth)
+        </dd>
+        <dt class="col-sm-2">
+            Address
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt class="col-sm-2">
+            Phone
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+        <dt class="col-sm-2">
+            Email
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+    </dl>
+
+    <h2>Enrolled Courses</h2>
+    @if (Model.Teachers_Courses != null && Model.Teachers_Courses.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Course Code</th>
+                    <th>Course Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var teacherCourse in Model.Teachers_Courses)
+                {
+                    <tr>
+                        <td>@teacherCourse.Course.Course_code</td>
+                        <td>@teacherCourse.Course.Course_Name</td>
+                        <td>@teacherCourse.Course.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No courses enrolled.</p>
+    }
+</div>
+
+<div>
+    <a asp-action="EditTc" asp-route-id="@Model?.Teacher_ID">Edit</a> |
+    <a asp-action="CoursesTc" asp-route-id="@Model.Teacher_ID">Enroll in Courses</a> |
+    <a asp-action="Tc">Back to List</a>
+</div>

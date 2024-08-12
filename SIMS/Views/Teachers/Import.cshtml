@@ -1,8 +1,8 @@
 ﻿@{
-    ViewBag.Title = "Import Users";
+    ViewBag.Title = "Import";
 }
 
-<h2>Import Users</h2>
+<h2>Import</h2>
 
 <form asp-action="Import" method="post" enctype="multipart/form-data">
     <div class="form-group">
@@ -14,8 +14,6 @@
     </div>
 </form>
 
-<div>
-    <form asp-controller="Users" asp-action="Index" method="post" class="form-inline">
-        <button type="submit" class="btn bg-primary">Back to home</button>
-    </form>
-</div>
+<form asp-controller="Teachers" asp-action="Home" method="post" class="form-inline">
+    <button type="submit" class="btn bg-primary">Back to home</button>
+</form>
